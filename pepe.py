@@ -24,11 +24,9 @@ def scan_subdomains(domain):
         except requests.ConnectionError:
             pass
         else:
-            print("[+] Discovered subdomain:", url)
-            # add the subdomain to the global list
+            print("[+] Discovered subdomain:", url) # add the subdomain to the global list
             with list_lock:
-                # time.sleep(args.delay)
-                discovered_domains.append(url)
+                discovered_domains.append(url) # time.sleep(args.delay)
                 
 
         v.task_done()  # done with scanning that subdomain
