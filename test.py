@@ -42,3 +42,43 @@ Step 8: Make Predictions and Evaluate the Model Make predictions on the test set
 y_pred = model.predict(X_test_selected)
 mse = mean_squared_error(y_test, y_pred)
 print("Mean Squared Error:", mse)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Initialize and Train the Lasso Regression Model Create a <Lasso Regression model>, and specify the strength of the regularization penalty, typically denoted as alpha. 
+Larger alpha values lead to stronger regularization, which results in more feature selection. You can use techniques like cross-validation to choose an appropriate alpha value.
+
+alpha = 0.01  # Adjust the value of alpha based on your data and requirements
+lasso_model = Lasso(alpha=alpha)
+lasso_model.fit(X_train, y_train)
+
+selected_features = X.columns[lasso_model.coef_ != 0]
+
+Random Forest
+
+Train a Random Forest Model Create and train a Random Forest classifier using your training data.
+rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_classifier.fit(X_train, y_train)
+Feature Importance Calculation Retrieve the feature importances from the trained Random Forest model.
+feature_importances = rf_classifier.feature_importances_
+
+Rank Features Rank the features based on their importance scores, in descending order. You can use this ranking to select the top features for your model.
+feature_ranking = pd.DataFrame({'Feature': X.columns, 'Importance': feature_importances}) 
+feature_ranking = feature_ranking.sort_values(by='Importance', ascending=False)
+
+Select Top Features Choose the top N features based on your requirements. You can select a fixed number of features or use a threshold on the importance score.
+top_n_features = feature_ranking.head(N)  # Replace N with the desired number of features
+selected_features = top_n_features['Feature'].tolist()
+
+Train and Evaluate the Model with Selected Features Train a Random Forest model using only the selected features and evaluate its performance.
+X_train_selected = X_train[selected_features]
+X_test_selected = X_test[selected_features]
+
+rf_classifier.fit(X_train_selected, y_train)
+y_pred = rf_classifier.predict(X_test_selected)
+
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy with Selected Features:", accuracy)
+
+
+
