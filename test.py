@@ -1,3 +1,10 @@
+open terminal
+type : nano filename.java
+paste ctrl+shift+v
+
+
+
+
 wordcount.java
 
 
