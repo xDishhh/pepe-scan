@@ -198,61 +198,84 @@ accuracy = accuracy_score(y_test,y_pred)
 print(accuracy*100,"%")
 ------------------------------------------------------------------------------------------------------------------------------------
 **Lab_sheet-7**
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import datasets
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from pandas import read_csv
+
 df=read_csv("/content/PIMA_diabetes.csv")
+
 x=np.array(df.drop(["Outcome"],1))
 y=np.array(df["Outcome"])
+
 df.head()
+
 print(np.shape(x))
 print(np.shape(y))
+
 scaler=StandardScaler()
 x_scaled=scaler.fit_transform(x)
+
 x_scaled
+
 n_components=2
 pca=PCA(n_components=n_components)
 x_pca=pca.fit_transform(x_scaled)
+
 np.shape(y)
+
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn import tree
 model=tree.DecisionTreeClassifier()
+
 model=tree.DecisionTreeClassifier(criterion="entropy",splitter="random",min_samples_split=4)
+
 x_train,x_test,y_train,y_test=train_test_split(x_pca,y,test_size=0.4,random_state=100)
+
 model=model.fit(x_train,y_train)
+
 y_pred=model.predict(x_test)
 print("accuracy:",accuracy_score(y_test,y_pred)*100)
 ------------------------------------------------------------------------------------------------------------------------------------
 **Labsheet-8**
+
 from google.colab import drive
 drive.mount('/content/drive/')
+
 import cv2
 import numpy as np
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.applications.resnet50 import preprocess_input,decode_predictions
 from tensorflow.keras.preprocessing import image
+
 model=ResNet50(weights='imagenet')
+
 img_path='/content/drive/MyDrive/Ml/1.jpeg'
 img=image.load_img(img_path,target_size=(224,224))
 img_array=image.img_to_array(img)
 img_array=np.expand_dims(img_array,axis=0)
 img_array=preprocess_input(img_array)
 predictions=model.predict(img_array)
+
 decoded_predictions=decode_predictions(predictions)
+
 for i,(imagenet_id,label,score) in enumerate(decoded_predictions[0]):
   print(f"{i+1}:{label}({score:.2f})")
+
 img=cv2.imread(img_path)
 img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+
 for _,label,score in decoded_predictions[0]:
   if score>0.5:
     print(f"Object:{label},Score:{score}")
     cv2.putText(img,f"{label}:{score:.2f}",(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2,cv2.LINE_AA)
+
 import matplotlib.pyplot as plt
 plt.imshow(img)
 plt.axis('off')
@@ -264,17 +287,25 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
+
 (train_images,train_labels),(test_images,test_labels)=mnist.load_data()
+
 train_images,test_images=train_images/255.0,test_images/255.0
+
 model=keras.Sequential([layers.Flatten(input_shape=(28,28)),
                         layers.Dense(128,activation='relu'),
                         layers.Dropout(0.2),
                         layers.Dense(10,activation='softmax')])
+
 model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
 model.fit(train_images,train_labels,epochs=20)
+
 test_loss,test_acc=model.evaluate(test_images,test_labels)
 print(f"Test accuracy:{test_acc}")
+
 predictions=model.predict(test_images)
+
 n=10
 plt.figure(figsize=(15,3))
 for i in range(n):
